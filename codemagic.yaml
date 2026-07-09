@@ -17,7 +17,10 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
-          # บังคับสลับเครื่องเซิร์ฟเวอร์มาใช้ Yarn v1 (Classic) เพื่อปลดล็อก Error
+          # 🟢 สเต็ปเด็ด: ใช้คำสั่ง node ถอดค่า packageManager ออกจาก package.json ทันทีเพื่อไม่ให้ระบบบล็อก
+          node -e "let fs = require('fs'); let p = JSON.parse(fs.readFileSync('package.json', 'utf8')); delete p.packageManager; fs.writeFileSync('package.json', JSON.stringify(p, null, 2));"
+          
+          # เปลี่ยนมาใช้ Yarn คลาสสิกทำงานแบบไม่มีตัวล็อกเวอร์ชันขวางทาง
           corepack disable || true
           npm install -g yarn
           yarn config set ignore-engines true
