@@ -12,13 +12,16 @@ workflows:
       cache_paths:
         - ~/.gradle/caches
         - ~/.gradle/wrapper
-        - .yarn/cache
         - node_modules
 
     scripts:
       - name: Install dependencies
         script: |
-          yarn install --no-immutable
+          # บังคับสลับเครื่องเซิร์ฟเวอร์มาใช้ Yarn v1 (Classic) เพื่อปลดล็อก Error
+          corepack disable || true
+          npm install -g yarn
+          yarn config set ignore-engines true
+          yarn install --no-lockfile
 
       - name: Expo prebuild
         script: |
