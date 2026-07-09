@@ -12,35 +12,31 @@ workflows:
       cache_paths:
         - ~/.gradle/caches
         - ~/.gradle/wrapper
-        - artifacts/sms-forwarder/node_modules
+        - .yarn/cache
+        - node_modules
 
     scripts:
       - name: Install dependencies
         script: |
-          touch yarn.lock
-          cd artifacts/sms-forwarder
-          touch yarn.lock
-          yarn install
+          yarn install --no-immutable
 
       - name: Expo prebuild
         script: |
-          cd artifacts/sms-forwarder
           yarn expo prebuild --platform android --clean --no-install
 
       - name: Set yarn worklets path
         script: |
-          WORKLETS=$(find artifacts/sms-forwarder/node_modules -type d -name "react-native-worklets" | grep -v reanimated | head -1)
-          sed -i "s|WORKLETS_PATH_PLACEHOLDER|$WORKLETS|g" \
-            artifacts/sms-forwarder/android/app/build.gradle || true
+          WORKLETS=$(find node_modules -type d -name "react-native-worklets" | grep -v reanimated | head -1)
+          sed -i "s|WORKLETS_PATH_PLACEHOLDER|$WORKLETS|g" android/app/build.gradle || true
 
       - name: Build release APK
         script: |
-          cd artifacts/sms-forwarder/android
+          cd android
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon --quiet
 
     artifacts:
-      - artifacts/sms-forwarder/android/app/build/outputs/apk/release/*.apk
+      - android/app/build/outputs/apk/release/*.apk
 
     publishing:
       email:
