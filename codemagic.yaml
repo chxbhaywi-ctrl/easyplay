@@ -16,16 +16,17 @@ workflows:
 
     scripts:
       - name: Install dependencies
-        script: pnpm install --frozen-lockfile
+        script: |
+          yarn install
 
       - name: Expo prebuild
         script: |
           cd artifacts/sms-forwarder
-          pnpm exec expo prebuild --platform android --clean --no-install
+          yarn expo prebuild --platform android --clean --no-install
 
-      - name: Set pnpm worklets path
+      - name: Set yarn worklets path
         script: |
-          WORKLETS=$(find artifacts/sms-forwarder/node_modules/.pnpm -type d -name "react-native-worklets" | grep -v reanimated | head -1)
+          WORKLETS=$(find artifacts/sms-forwarder/node_modules -type d -name "react-native-worklets" | grep -v reanimated | head -1)
           sed -i "s|WORKLETS_PATH_PLACEHOLDER|$WORKLETS|g" \
             artifacts/sms-forwarder/android/app/build.gradle || true
 
