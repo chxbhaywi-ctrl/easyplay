@@ -17,6 +17,9 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
+          touch yarn.lock
+          cd artifacts/sms-forwarder
+          touch yarn.lock
           yarn install
 
       - name: Expo prebuild
